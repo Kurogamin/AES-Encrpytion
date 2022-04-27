@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="boardController" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label fx:id="boardHeader" alignment="CENTER" contentDisplay="RIGHT" layoutY="9.0" prefHeight="69.0" prefWidth="800.0" text="XDDDDD" textAlignment="CENTER">
+            <font>
+                <Font name="System Bold" size="25.0" />
+            </font>
+        </Label>
+      <Label alignment="CENTER" layoutX="14.0" layoutY="74.0" prefHeight="37.0" prefWidth="381.0" text="Encrypt" textAlignment="CENTER" />
+      <Label alignment="CENTER" layoutX="400.0" layoutY="74.0" prefHeight="37.0" prefWidth="398.0" text="Decrypt" textAlignment="CENTER" />
+      <TabPane prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Message">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea fx:id="messageToEncryptTextArea" layoutX="20.0" layoutY="109.0" prefHeight="85.0" prefWidth="360.0" wrapText="true" />
+                        <Label layoutX="20.0" layoutY="80.0" prefHeight="29.0" prefWidth="135.0" text="Message to encrypt" />
+                        <TextArea fx:id="messageToDecryptTextArea" layoutX="420.0" layoutY="109.0" prefHeight="85.0" prefWidth="360.0" />
+                        <Label layoutX="420.0" layoutY="80.0" prefHeight="29.0" prefWidth="135.0" text="Message to Decrypt" />
+                        <Label layoutX="20.0" layoutY="226.0" prefHeight="29.0" prefWidth="135.0" text="Key" />
+                        <Label layoutX="20.0" layoutY="301.0" prefHeight="29.0" prefWidth="135.0" text="Encrypted message" />
+                        <Label layoutX="420.0" layoutY="301.0" prefHeight="29.0" prefWidth="135.0" text="Decrypted message" />
+                        <Label layoutX="422.0" layoutY="226.0" prefHeight="29.0" prefWidth="135.0" text="Key" />
+                        <TextField fx:id="decryptedMessageKeyTextField" layoutX="422.0" layoutY="257.0" prefHeight="25.0" prefWidth="357.0" />
+                        <TextField fx:id="encryptedMessageKeyTextField" disable="true" layoutX="17.0" layoutY="257.0" prefHeight="25.0" prefWidth="364.0" />
+                        <TextArea fx:id="encryptedTextArea" disable="true" layoutX="19.0" layoutY="330.0" prefHeight="85.0" prefWidth="360.0" wrapText="true" />
+                        <TextArea fx:id="decryptedTextArea" disable="true" layoutX="422.0" layoutY="330.0" prefHeight="85.0" prefWidth="360.0" wrapText="true" />
+                        <Button fx:id="encryptMessageButton" layoutX="130.0" layoutY="480.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="159.0" text="Encrypt" />
+                        <Button fx:id="decryptMessageButton" layoutX="523.0" layoutY="470.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="159.0" text="Decrypt" />
+                        <Label fx:id="errorEncryptMessageLabel" alignment="CENTER" layoutX="4.0" layoutY="530.0" prefHeight="27.0" prefWidth="389.0" textFill="RED" />
+                        <Label fx:id="errorDecryptMessageLabel" alignment="CENTER" layoutX="406.0" layoutY="530.0" prefHeight="27.0" prefWidth="389.0" textFill="RED" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="File">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="selectFileToEncryptButton" layoutX="290.0" layoutY="115.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Select file" />
+                        <TextField fx:id="fileToEncryptNameTextField" disable="true" layoutX="26.0" layoutY="115.0" prefHeight="25.0" prefWidth="249.0" />
+                        <TextField fx:id="fileNameToEncryptTextField" layoutX="26.0" layoutY="183.0" prefWidth="249.0" />
+                        <Label layoutX="26.0" layoutY="84.0" prefHeight="31.0" prefWidth="142.0" text="File name to encrypt" />
+                        <Label layoutX="26.0" layoutY="154.0" prefHeight="31.0" prefWidth="178.0" text="Encrypted file name" />
+                        <Label layoutX="25.0" layoutY="230.0" prefHeight="29.0" prefWidth="135.0" text="Key" />
+                        <TextField fx:id="encryptedFileKeyTextField" disable="true" layoutX="26.0" layoutY="259.0" prefHeight="25.0" prefWidth="364.0" />
+                        <Button fx:id="encryptFileButton" layoutX="130.0" layoutY="480.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="159.0" text="Encrypt" />
+                        <Button fx:id="selectFileToDecryptButton" layoutX="684.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Select file" />
+                        <TextField fx:id="fileNameToDecryptTextField" disable="true" layoutX="420.0" layoutY="118.0" prefHeight="25.0" prefWidth="249.0" />
+                        <Label layoutX="420.0" layoutY="87.0" prefHeight="31.0" prefWidth="119.0" text="Encrypted file name" />
+                        <TextField fx:id="decryptedFileNameTextArea" layoutX="421.0" layoutY="183.0" prefWidth="249.0" />
+                        <Label layoutX="421.0" layoutY="154.0" prefHeight="31.0" prefWidth="178.0" text="Decrypted file name" />
+                        <Label layoutX="420.0" layoutY="230.0" prefHeight="29.0" prefWidth="135.0" text="Key" />
+                        <TextField fx:id="decryptedFileKeyTextField" layoutX="421.0" layoutY="259.0" prefHeight="25.0" prefWidth="364.0" />
+                        <TextField fx:id="decryptedExtensionFileTextArea" disable="true" layoutX="678.0" layoutY="183.0" prefHeight="25.0" prefWidth="51.0" />
+                        <Button fx:id="decryptFileButton" layoutX="523.0" layoutY="470.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="159.0" text="Decrypt" />
+                        <Label fx:id="errorEncryptFileLabel" alignment="CENTER" layoutX="14.0" layoutY="540.0" prefHeight="27.0" prefWidth="389.0" textFill="RED" />
+                        <Label fx:id="errorDecryptFileLabel" alignment="CENTER" layoutX="416.0" layoutY="540.0" prefHeight="27.0" prefWidth="389.0" textFill="RED" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <Line endX="400.0" endY="600.0" startX="400.29290771484375" startY="28.292892456054688" />
+    </children>
+</AnchorPane>
