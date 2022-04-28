@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class IO {
-    public static byte[] readFileToByteArray(String filePath) {
+    public byte[] readFileToByteArray(String filePath) {
         Path path = Paths.get(filePath);
 
         try {
@@ -17,7 +17,7 @@ public class IO {
         }
     }
 
-    public static byte [][] makeByteMatrix(byte[] packet) {
+    public byte [][] makeByteMatrix(byte[] packet) {
         if (packet.length > 16) {
             System.out.println("Packet too large(more than 16 bytes)");
             return new byte[0][0];
@@ -35,7 +35,7 @@ public class IO {
         return matrix;
     }
 
-    public static byte[] byteArrayFromMatrix(byte [][] matrix) {
+    public byte[] byteArrayFromMatrix(byte [][] matrix) {
         byte [] output = new byte[matrix.length * matrix[0].length];
         int i = 0;
         for (byte [] row : matrix) {
