@@ -58,15 +58,21 @@ class AESTest {
     }
 
     @Test
-    void multipleColumn() {
+    void mixColumns() {
 
         int [][] testMatrix =  {{0x87, 0xF2, 0x4D, 0x97},
                                 {0x6E, 0x4C, 0x90, 0xEC},
                                 {0x46, 0xE7, 0x4A, 0xC3},
                                 {0xA6, 0x8c, 0xD8, 0x95}};
 
-        //byte [][] testByteMatrix = aes.convertIntToByteArray(testMatrix);
-        //System.out.println(14 ^ 74);
-        //assertEquals(aes.multipleColumn(testByteMatrix, 0, 2), 0x47);
+        int [][] testResultMatrix = {{0x47, 0x40, 0xA3, 0x4C},
+                                    {0x37, 0xD4, 0x70, 0x9F},
+                                    {0x94, 0xE4, 0x3A, 0x42},
+                                    {0xED, 0xA5, 0xA6, 0xBC}};
+
+        byte [][] testByteMatrix = aes.convertIntToByteArray(testMatrix);
+        byte [][] testResultByteMatrix = aes.convertIntToByteArray(testResultMatrix);
+
+        assertArrayEquals(aes.mixColumns(testByteMatrix), testResultByteMatrix);
     }
 }

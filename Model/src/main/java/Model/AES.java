@@ -2,12 +2,6 @@ package Model;
 
 public class AES {
 
-    private final int [][] matrixToMixColumns ={{2, 3, 1, 1},
-                                                {1, 2, 3, 1},
-                                                {1, 1, 2,3},
-                                                {3, 1, 1, 2}};
-
-
     public byte [][] shiftRows(byte [][] matrix, boolean inverse) {
         byte[][] shifted = new byte[4][4];
         for (int i = 0; i < 4; i++) {
@@ -55,19 +49,36 @@ public class AES {
         return matrix;
     }
 
-    //public byte [][] mixColumns(byte [][] matrix) {
-        //for(int i = 0; i < 16; i++) {
+    public byte [][] mixColumns(byte [][] matrix) {
+        byte [][] result = new byte[4][4];
 
-        //}
-    //}
-
-/*    public byte multipleColumn(byte [][] matrix, int columnIndex, int rowIndex) {
-        byte result = 0;
-        for (int i = 0; i < 4; i ++) {
-            result ^= (byte) (matrixToMixColumns[rowIndex][i] * matrix[i][columnIndex]);
+        for (int i = 0; i < 4; i++) {
+            result[0][i] = (byte)(GMul((byte)0x02, matrix[0][i]) ^ GMul((byte)0x03, matrix[1][i]) ^ matrix[2][i] ^ matrix[3][i]);
+            result[1][i] = (byte)(matrix[0][i] ^ GMul((byte)0x02, matrix[1][i]) ^ GMul((byte)0x03, matrix[2][i]) ^ matrix[3][i]);
+            result[2][i] = (byte)(matrix[0][i] ^ matrix[1][i] ^ GMul((byte)0x02, matrix[2][i]) ^ GMul((byte)0x03, matrix[3][i]));
+            result[3][i] = (byte)(GMul((byte)0x03, matrix[0][i]) ^ matrix[1][i] ^ matrix[2][i] ^ GMul((byte)0x02, matrix[3][i]));
         }
-        return (byte)result;
-    }*/
+        return result;
+    }
+
+    private byte GMul(byte a, byte b) { // Galois Field (256) Multiplication of two Bytes
+        byte p = 0;
+
+        for (int counter = 0; counter < 8; counter++) {
+            if ((b & 1) != 0) {
+                p ^= a;
+            }
+
+            boolean hi_bit_set = (a & 0x80) != 0;
+            a <<= 1;
+            if (hi_bit_set) {
+                a ^= 0x1B; /* x^8 + x^4 + x^3 + x + 1 */
+            }
+            b >>= 1;
+        }
+
+        return p;
+    }
 
     byte [][] convertIntToByteArray(int[][] matrix) {
         byte [][] byteArray = new byte[4][4];
