@@ -15,6 +15,10 @@ public class AES {
         return shifted;
     }
 
+    public static byte [][] shiftRows(byte [][] matrix) {
+        return shiftRows(matrix, false);
+    }
+
     public static void rotate(byte [][] matrix, boolean left) {
         for (int i = 1; i < 4; i++) {
             byte [] rotatedRow = new byte[4];
