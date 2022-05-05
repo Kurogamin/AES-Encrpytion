@@ -1,5 +1,7 @@
 package Model;
 
+import java.nio.charset.StandardCharsets;
+
 public class TESTS {
     /*public static void main(String args[]) {
         byte left = (byte) 0b11110000;
@@ -29,4 +31,8 @@ public class TESTS {
         }
     }*/
 
+    String key = "1234567890123456";
+    byte [] key_bytes = key.getBytes(StandardCharsets.UTF_8);
+    byte [] expanded_keys = new byte[176];
+    AES cipher = new AES();
 }
