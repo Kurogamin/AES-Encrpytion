@@ -1,25 +1,81 @@
 package Model;
 
 public class AES {
+    public byte [] encrypt(byte [] data, byte[] expandedKey, int rounds) {
+        byte [][] state = IO.makeByteMatrix(data);
 
+
+        byte [] nextKey = new byte[16];
+        addRoundKey(state, expandedKey);
+
+        for (int i = 0; i < rounds - 1; i++) {
+            substituteBytes(state);
+            state = shiftRows(state);
+            state = mixColumns(state);
+            System.arraycopy(expandedKey, 16 * (i + 1), nextKey, 0, 16);
+            addRoundKey(state, nextKey);
+        }
+
+        // Final round
+        substituteBytes(state);
+        state = shiftRows(state);
+        System.arraycopy(expandedKey, rounds * 16, nextKey, 0, 16);
+        addRoundKey(state, nextKey);
+
+        return IO.byteArrayFromMatrix(state);
+    }
+
+    byte [] decrypt(byte [] data, byte[] expandedKey, int rounds) {
+        byte [][] state = IO.makeByteMatrix(data);
+        byte [] nextKey = new byte[16];
+
+        System.arraycopy(expandedKey, rounds * 16, nextKey, 0, 16);
+        addRoundKey(state, nextKey);
+
+        for (int i = rounds - 1; i > 0; i--) {
+            state = shiftRows(state, true);
+            substituteBytes(state, true);
+            System.arraycopy(expandedKey, i * 16, nextKey, 0, 16);
+            addRoundKey(state, nextKey);
+            state = mixColumns(state, true);
+        }
+
+        state = shiftRows(state, true);
+        substituteBytes(state, true);
+        addRoundKey(state, expandedKey);
+
+        return IO.byteArrayFromMatrix(state);
+    }
     public byte [][] shiftRows(byte [][] matrix, boolean inverse) {
         byte[][] shifted = new byte[4][4];
         for (int i = 0; i < 4; i++) {
             System.arraycopy(matrix[i], 0, shifted[i], 0, 4);
         }
         if (!inverse) {
-            rotate(shifted);
+            shifted = rotate(shifted);
         } else {
-            rotate(shifted, true);
+            shifted = rotate(shifted, true);
         }
         return shifted;
+    }
+
+    void addRoundKey(byte [][] state, byte [] round_key) {
+        int k = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                state[j][i] ^= round_key[k++];
+            }
+        }
+
     }
 
     public byte [][] shiftRows(byte [][] matrix) {
         return shiftRows(matrix, false);
     }
 
-    public void rotate(byte [][] matrix, boolean left) {
+    public byte [][] rotate(byte [][] matrix, boolean left) {
+        byte [][] newMatrix = new byte [4][4];
+        newMatrix[0] = matrix[0];
         for (int i = 1; i < 4; i++) {
             byte [] rotatedRow = new byte[4];
             for (int j = 0; j < 4; j++) {
@@ -29,37 +85,55 @@ public class AES {
                     rotatedRow[j] = matrix[i][((j + 4) + i) % 4];
                 }
             }
-            matrix[i] = rotatedRow;
+            newMatrix[i] = rotatedRow;
         }
+        return newMatrix;
     }
 
-    public void rotate(byte [][] matrix) {
-        rotate(matrix, false);
+    public byte [][] rotate(byte [][] matrix) {
+        return rotate(matrix, false);
     }
 
-    public byte [][] substituteBytes(byte [][] matrix, boolean isDecrypt) {
-        Utilities sBox = new Utilities();
+    public void substituteBytes(byte [][] matrix, boolean isDecrypt) {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                    matrix[i][j] = sBox.substitute(matrix[i][j], isDecrypt);
+                matrix[i][j] = Utilities.substitute(matrix[i][j], isDecrypt);
             }
         }
 
-        return matrix;
+        //return matrix;
+    }
+
+    public void substituteBytes(byte [][] matrix) {
+        substituteBytes(matrix, false);
+    }
+
+    public byte [][] mixColumns(byte [][] matrix, boolean inverse) {
+        byte [][] result = new byte[4][4];
+        if (!inverse) {
+            for (int i = 0; i < 4; i++) {
+                result[0][i] = (byte)(GMul((byte)0x02, matrix[0][i]) ^ GMul((byte)0x03, matrix[1][i]) ^ matrix[2][i] ^ matrix[3][i]);
+                result[1][i] = (byte)(matrix[0][i] ^ GMul((byte)0x02, matrix[1][i]) ^ GMul((byte)0x03, matrix[2][i]) ^ matrix[3][i]);
+                result[2][i] = (byte)(matrix[0][i] ^ matrix[1][i] ^ GMul((byte)0x02, matrix[2][i]) ^ GMul((byte)0x03, matrix[3][i]));
+                result[3][i] = (byte)(GMul((byte)0x03, matrix[0][i]) ^ matrix[1][i] ^ matrix[2][i] ^ GMul((byte)0x02, matrix[3][i]));
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                result[0][i] = (byte)(GMul((byte)0x0E, matrix[0][i]) ^ GMul((byte)0x0B, matrix[1][i]) ^ GMul((byte)0x0D, matrix[2][i]) ^ GMul((byte)0x09, matrix[3][i]));
+                result[1][i] = (byte)(GMul((byte)0x09, matrix[0][i]) ^ GMul((byte)0x0E, matrix[1][i]) ^ GMul((byte)0x0B, matrix[2][i]) ^ GMul((byte)0x0D, matrix[3][i]));
+                result[2][i] = (byte)(GMul((byte)0x0D, matrix[0][i]) ^ GMul((byte)0x09, matrix[1][i]) ^ GMul((byte)0x0E, matrix[2][i]) ^ GMul((byte)0x0B, matrix[3][i]));
+                result[3][i] = (byte)(GMul((byte)0x0B, matrix[0][i]) ^ GMul((byte)0x0D, matrix[1][i]) ^ GMul((byte)0x09, matrix[2][i]) ^ GMul((byte)0x0E, matrix[3][i]));
+            }
+        }
+
+        return result;
     }
 
     public byte [][] mixColumns(byte [][] matrix) {
-        byte [][] result = new byte[4][4];
-
-        for (int i = 0; i < 4; i++) {
-            result[0][i] = (byte)(GMul((byte)0x02, matrix[0][i]) ^ GMul((byte)0x03, matrix[1][i]) ^ matrix[2][i] ^ matrix[3][i]);
-            result[1][i] = (byte)(matrix[0][i] ^ GMul((byte)0x02, matrix[1][i]) ^ GMul((byte)0x03, matrix[2][i]) ^ matrix[3][i]);
-            result[2][i] = (byte)(matrix[0][i] ^ matrix[1][i] ^ GMul((byte)0x02, matrix[2][i]) ^ GMul((byte)0x03, matrix[3][i]));
-            result[3][i] = (byte)(GMul((byte)0x03, matrix[0][i]) ^ matrix[1][i] ^ matrix[2][i] ^ GMul((byte)0x02, matrix[3][i]));
-        }
-        return result;
+        return mixColumns(matrix, false);
     }
+
 
     private byte GMul(byte a, byte b) { // Galois Field (256) Multiplication of two Bytes
         byte p = 0;
@@ -99,11 +173,11 @@ public class AES {
      * input_key: 16 byte key used for expansion
      * expanded_key: is set to resulting expanded key
      */
-    public byte [] key_expansion(byte[] input_key, int rounds) {
+    public byte [] keyExpansion(byte[] input_key, int rounds) {
         int bytes = 0;
-        if (rounds == 9) bytes = 176;
-        else if (rounds == 11) bytes = 208;
-        else if (rounds == 13) bytes = 240;
+        if (rounds == 10) bytes = 176;
+        else if (rounds == 12) bytes = 208;
+        else if (rounds == 14) bytes = 240;
 
         byte[] expanded_keys = new byte[bytes];
         // Set first 16 bytes to input_key
@@ -139,8 +213,9 @@ public class AES {
         in[2] = in[3];
         in[3] = temp;
 
-        for (byte b : in) {
-            b = Utilities.substitute(b);
+
+        for (int j = 0; j < 4; j++) {
+            in[j] = Utilities.substitute(in[j]);
         }
 
         // RCon XOR

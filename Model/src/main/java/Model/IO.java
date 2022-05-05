@@ -17,7 +17,7 @@ public class IO {
         }
     }
 
-    public byte [][] makeByteMatrix(byte[] packet) {
+    public static byte [][] makeByteMatrix(byte[] packet) {
         if (packet.length > 16) {
             System.out.println("Packet too large(more than 16 bytes)");
             return new byte[0][0];
@@ -29,18 +29,17 @@ public class IO {
             }
         }
         for (double i = 0; i < packet.length; i++) {
-            matrix[(int) Math.floor(i / 4)][(int) (i % 4)] = packet[(int) i];
+            matrix[(int) (i % 4)][(int) Math.floor(i / 4)] = packet[(int) i];
         }
 
         return matrix;
     }
 
-    public byte[] byteArrayFromMatrix(byte [][] matrix) {
+    public static byte[] byteArrayFromMatrix(byte [][] matrix) {
         byte [] output = new byte[matrix.length * matrix[0].length];
-        int i = 0;
-        for (byte [] row : matrix) {
-            for (byte packetByte : row) {
-                output[i++] = packetByte;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                output[i * 4 + j] = matrix[j][i];
             }
         }
         return output;
