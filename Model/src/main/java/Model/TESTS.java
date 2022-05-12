@@ -14,12 +14,13 @@ public class TESTS {
         }
         System.out.println();
         byte [] expanded_keys;
-        AES cipher = new AES();
-        expanded_keys = cipher.keyExpansion(key_bytes, 10);
+        AES aes = new AES();
+        expanded_keys = aes.keyExpansion(key_bytes, 10);
 
-        byte [] newText = cipher.encrypt(message.getBytes(StandardCharsets.UTF_8), expanded_keys, 10);
-        byte [] startMessage = message.getBytes(StandardCharsets.UTF_8);
-        byte [] decrypted = cipher.decrypt(newText, expanded_keys, 10);
+        byte [] file = IO.readFileToByteArray("specjalnosci.pdf");
+        byte [] encryptedFile = aes.cipher(file, key, true);
+        byte [] decryptedFile = aes.cipher(encryptedFile, key, false);
+        IO.writeFileFromByteArray(decryptedFile, "xd.pdf");
         System.out.println();
     }
 

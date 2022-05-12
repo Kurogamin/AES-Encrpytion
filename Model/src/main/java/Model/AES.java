@@ -1,8 +1,55 @@
 package Model;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class AES {
-    public byte [] encrypt(byte [] data, byte[] expandedKey, int rounds) {
+    public byte [] cipher(byte [] data, String key, boolean encryption) {
+        byte [] expanded_keys = AES.keyExpansion(key.getBytes(StandardCharsets.UTF_8), 10);
+        ArrayList<Byte> result = new ArrayList<Byte>();
+
+        byte [] packet = new byte [16];
+        for (int i = 0; i < data.length; i++) {
+            packet[i % 16] = data[i];
+            if (i % 16 == 15 || i == data.length - 1) {
+                byte [] newPacket;
+                if (encryption) {
+                    newPacket = encrypt(packet, expanded_keys);
+                } else {
+                    newPacket = decrypt(packet, expanded_keys);
+                }
+                for (int j = 0; j < packet.length; j++) {
+                    result.add(newPacket[j]);
+                }
+                packet = new byte [16];
+            }
+        }
+        int resultSize = result.size();
+        if (!encryption) {
+            boolean zeros = true;
+            int i = result.size() - 1;
+            while (zeros) {
+                if (result.get(i) == 0) {
+                    resultSize--;
+                    i--;
+                } else {
+                    zeros = false;
+                }
+            }
+        }
+        byte [] resultArray = new byte[resultSize];
+        for (int k = 0; k < resultSize; k++) {
+            resultArray[k] = result.get(k);
+        }
+
+        return resultArray;
+    }
+
+    public byte [] encrypt(byte [] data, byte[] expandedKey) {
         byte [][] state = IO.makeByteMatrix(data);
+        int rounds = 10;
 
 
         byte [] nextKey = new byte[16];
@@ -25,7 +72,8 @@ public class AES {
         return IO.byteArrayFromMatrix(state);
     }
 
-    byte [] decrypt(byte [] data, byte[] expandedKey, int rounds) {
+    byte [] decrypt(byte [] data, byte[] expandedKey) {
+        int rounds = 10;
         byte [][] state = IO.makeByteMatrix(data);
         byte [] nextKey = new byte[16];
 
@@ -173,7 +221,7 @@ public class AES {
      * input_key: 16 byte key used for expansion
      * expanded_key: is set to resulting expanded key
      */
-    public byte [] keyExpansion(byte[] input_key, int rounds) {
+    public static byte [] keyExpansion(byte[] input_key, int rounds) {
         int bytes = 0;
         if (rounds == 10) bytes = 176;
         else if (rounds == 12) bytes = 208;
@@ -205,7 +253,7 @@ public class AES {
         return expanded_keys;
     }
 
-    void key_expansion_core(byte[] in, int i) {
+    static void key_expansion_core(byte[] in, int i) {
         // Left rotate bytes
         byte temp = in[0];
         in[0] = in[1];

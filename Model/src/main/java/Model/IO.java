@@ -1,12 +1,16 @@
 package Model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class IO {
-    public byte[] readFileToByteArray(String filePath) {
+    public static byte[] readFileToByteArray(String filePath) {
         Path path = Paths.get(filePath);
 
         try {
@@ -14,6 +18,16 @@ public class IO {
         } catch (IOException e) {
             System.out.println("No such file I guess");
             return new byte[0];
+        }
+    }
+
+    public static void writeFileFromByteArray(byte [] data, String path) {
+        File file = new File(path);
+        try (OutputStream os = new FileOutputStream(file)) {
+            os.write(data);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
