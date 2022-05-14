@@ -48,7 +48,7 @@ public class MainWindowController {
 
         stage.setResizable(false);
         stage.setScene(scene);
-        stage.setTitle("Cryptography");
+        stage.setTitle("AES Encryption and Decryption Tool");
     }
 
     @FXML
