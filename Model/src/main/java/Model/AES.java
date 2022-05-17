@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AES {
     public byte [] cipher(byte [] data, String key, boolean encryption) {
-        byte [] expanded_keys = AES.keyExpansion(key.getBytes(StandardCharsets.UTF_8), 10);
+        byte [] expanded_keys = AES.keyExpansion(key.getBytes(StandardCharsets.UTF_8));
         ArrayList<Byte> result = new ArrayList<Byte>();
 
         byte [] packet = new byte [16];
@@ -198,11 +198,8 @@ public class AES {
         return p;
     }
 
-    public static byte [] keyExpansion(byte[] input_key, int rounds) {
-        int bytes = 0;
-        if (rounds == 10) bytes = 176;
-        else if (rounds == 12) bytes = 208;
-        else if (rounds == 14) bytes = 240;
+    public static byte [] keyExpansion(byte[] input_key) {
+        int bytes = 176;
 
         byte[] expanded_keys = new byte[bytes];
         System.arraycopy(input_key, 0, expanded_keys, 0, 16);
