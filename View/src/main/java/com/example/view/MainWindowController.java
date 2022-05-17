@@ -117,7 +117,6 @@ public class MainWindowController {
             if (fileToEncrypt != null && !key.isEmpty() && !fileNameToEncryptTextField.getText().isEmpty()) {
                 byte [] file = IO.readFileToByteArray(fileToEncrypt.getAbsolutePath());
                 byte [] encryptedFile = aes.cipher(file, key, true);
-                //byte [] decryptedFile = aes.cipher(encryptedFile, key, false);
                 IO.writeFileFromByteArray(encryptedFile, fileToEncrypt.getParent() + "\\" + fileNameToEncryptTextField.getText());
                 errorEncryptFileLabel.setText("");
             } else {

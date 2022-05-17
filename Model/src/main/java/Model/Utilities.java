@@ -62,10 +62,8 @@ public class Utilities {
         int x = (b & 0b11110000) >> 4;
         int y = b & 0b00001111;
         if (!inverse) {
-            //b = (byte) sBox[x][y];
             return (byte) sBox[x][y];
         } else {
-            //b = (byte) inverseSbox[x][y];
             return (byte) inverseSbox[x][y];
         }
     }
@@ -73,19 +71,4 @@ public class Utilities {
         return substitute(b, false);
     }
 
-    /*public static void substituteArray(byte [] b, boolean inverse) {
-        if (!inverse) {
-            for (byte value : b) {
-                substitute(value);
-            }
-        } else {
-            for (byte value : b) {
-                substitute(value, true);
-            }
-        }
-
-    }
-    public static void substituteArray(byte [] b) {
-        substituteArray(b, false);
-    }*/
 }
